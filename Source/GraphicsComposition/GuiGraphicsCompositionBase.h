@@ -48,11 +48,11 @@ Basic Construction
 				/// </summary>
 				enum MinSizeLimitation
 				{
-					/// <summary>[T:vl.presentation.compositions.GuiGraphicsComposition.MinSizeLimitation]No limitation for the minimum size.</summary>
+					/// <summary>No limitation for the minimum size.</summary>
 					NoLimit,
-					/// <summary>[T:vl.presentation.compositions.GuiGraphicsComposition.MinSizeLimitation]Minimum size of this composition is the minimum size of the contained graphics element.</summary>
+					/// <summary>Minimum size of this composition is the minimum size of the contained graphics element.</summary>
 					LimitToElement,
-					/// <summary>[T:vl.presentation.compositions.GuiGraphicsComposition.MinSizeLimitation]Minimum size of this composition is combiniation of sub compositions and the minimum size of the contained graphics element.</summary>
+					/// <summary>Minimum size of this composition is combiniation of sub compositions and the minimum size of the contained graphics element.</summary>
 					LimitToElementAndChildren,
 				};
 			protected:
@@ -171,7 +171,7 @@ Basic Construction
 				/// <returns>The associated hit test result.</returns>
 				INativeWindowListener::HitTestResult		GetAssociatedHitTestResult();
 				/// <summary>Set the associated hit test result.</summary>
-				/// <param name="cursor">The associated hit test result.</param>
+				/// <param name="value">The associated hit test result.</param>
 				void										SetAssociatedHitTestResult(INativeWindowListener::HitTestResult value);
 				
 				/// <summary>Get the related control. A related control is the deepest control that contains this composition.</summary>

@@ -437,6 +437,7 @@ GuiApplicationMain
 				theme::SetCurrentTheme(0);
 				DestroyGlobalTypeManager();
 				DestroyPluginManager();
+				ThreadLocalStorage::DisposeStorages();
 			}
 		}
 	}
@@ -2223,20 +2224,20 @@ GuiTab
 				}
 			}
 
-			bool GuiTab::RemovePage(GuiTabPage* value)
+			bool GuiTab::RemovePage(GuiTabPage* page)
 			{
-				if(value->GetOwnerTab()==this && value->DeassociateTab(this))
+				if(page->GetOwnerTab()==this && page->DeassociateTab(this))
 				{
-					vint index=tabPages.IndexOf(value);
+					vint index=tabPages.IndexOf(page);
 					styleController->RemoveTab(index);
-					GetContainerComposition()->RemoveChild(value->GetContainerComposition());
+					GetContainerComposition()->RemoveChild(page->GetContainerComposition());
 					tabPages.RemoveAt(index);
 					if(tabPages.Count()==0)
 					{
 						SetSelectedPage(0);
 						return 0;
 					}
-					else if(selectedPage==value)
+					else if(selectedPage==page)
 					{
 						SetSelectedPage(tabPages[0]);
 					}
@@ -25649,7 +25650,7 @@ GuiBindableDataVisualizer::Factory
 GuiBindableDataVisualizer::DecoratedFactory
 ***********************************************************************/
 
-			GuiBindableDataVisualizer::DecoratedFactory::DecoratedFactory(Ptr<GuiTemplate::IFactory> _templateFactory, controls::list::BindableDataColumn* _ownerColumn, Ptr<IDataVisualizerFactory> _decoratedFactory)
+			GuiBindableDataVisualizer::DecoratedFactory::DecoratedFactory(Ptr<GuiTemplate::IFactory> _templateFactory, controls::list::BindableDataColumn* _ownerColumn, Ptr<controls::list::IDataVisualizerFactory> _decoratedFactory)
 				:DataDecoratableVisualizerFactory<GuiBindableDataVisualizer>(_decoratedFactory)
 				, templateFactory(_templateFactory)
 				, ownerColumn(_ownerColumn)
@@ -25748,7 +25749,7 @@ GuiBindableDataEditor::Factory
 			{
 			}
 
-			Ptr<IDataEditor> GuiBindableDataEditor::Factory::CreateEditor(controls::list::IDataEditorCallback* callback)
+			Ptr<controls::list::IDataEditor> GuiBindableDataEditor::Factory::CreateEditor(controls::list::IDataEditorCallback* callback)
 			{
 				auto editor = DataEditorFactory<GuiBindableDataEditor>::CreateEditor(callback).Cast<GuiBindableDataEditor>();
 				if (editor)
@@ -30895,13 +30896,19 @@ RepeatingParsingExecutor
 				,autoPushingCallback(0)
 			{
 				PrepareMetaData();
-				analyzer->Attach(this);
+				if (analyzer)
+				{
+					analyzer->Attach(this);
+				}
 			}
 
 			RepeatingParsingExecutor::~RepeatingParsingExecutor()
 			{
 				EnsureTaskFinished();
-				analyzer->Detach(this);
+				if (analyzer)
+				{
+					analyzer->Detach(this);
+				}
 			}
 
 			Ptr<parsing::tabling::ParsingGeneralParser> RepeatingParsingExecutor::GetParser()
@@ -38842,7 +38849,8 @@ DocumentModel
 
 			auto indexDst = styles.Keys().IndexOf(styleName);
 			auto csp = baselineDocument->styles.Values()[indexSrc]->styles;
-			Ptr<DocumentStyleProperties> sp = new DocumentStyleProperties(*csp.Obj());
+			Ptr<DocumentStyleProperties> sp = new DocumentStyleProperties;
+			MergeStyle(sp, csp);
 			if (indexDst != -1)
 			{
 				MergeStyle(sp, styles.Values()[indexDst]->styles);
@@ -41369,22 +41377,21 @@ DocumentModel
 							model->styles.Add(styleName, style);
 							if (styleName.Length() > 9 && styleName.Right(9) == L"-Override")
 							{
-								{
-									auto sp = new DocumentStyleProperties(*style->styles.Obj());
-									style = new DocumentStyle;
-									style->styles = sp;
-								}
+								auto overridedStyle = MakePtr<DocumentStyle>();
+								overridedStyle->styles = new DocumentStyleProperties;
+								MergeStyle(overridedStyle->styles, style->styles);
+
 								styleName = styleName.Left(styleName.Length() - 9);
 								auto index = model->styles.Keys().IndexOf(styleName);
 								if (index == -1)
 								{
-									model->styles.Add(styleName, style);
+									model->styles.Add(styleName, overridedStyle);
 								}
 								else
 								{
 									auto originalStyle = model->styles.Values()[index];
-									MergeStyle(style->styles, originalStyle->styles);
-									originalStyle->styles = style->styles;
+									MergeStyle(overridedStyle->styles, originalStyle->styles);
+									originalStyle->styles = overridedStyle->styles;
 								}
 							}
 						}

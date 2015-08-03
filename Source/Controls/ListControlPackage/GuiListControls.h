@@ -76,7 +76,7 @@ List Control
 					virtual Rect									GetStyleBounds(IItemStyleController* style)=0;
 					/// <summary>Set the bounds of an item control.</summary>
 					/// <param name="style">The item control.</param>
-					/// <param name="margin">The new bounds.</param>
+					/// <param name="bounds">The new bounds.</param>
 					virtual void									SetStyleBounds(IItemStyleController* style, Rect bounds)=0;
 					/// <summary>Get the <see cref="compositions::GuiGraphicsComposition"/> that directly contains item controls.</summary>
 					/// <returns>The <see cref="compositions::GuiGraphicsComposition"/> that directly contains item controls.</returns>
@@ -126,25 +126,25 @@ List Control
 				/// <summary>Represents the four directions that is accessable by keyboard.</summary>
 				enum KeyDirection
 				{
-					/// <summary>[T:vl.presentation.controls.GuiListControl.KeyDirection]The up direction.</summary>
+					/// <summary>The up direction.</summary>
 					Up,
-					/// <summary>[T:vl.presentation.controls.GuiListControl.KeyDirection]The down direction.</summary>
+					/// <summary>The down direction.</summary>
 					Down,
-					/// <summary>[T:vl.presentation.controls.GuiListControl.KeyDirection]The left direction.</summary>
+					/// <summary>The left direction.</summary>
 					Left,
-					/// <summary>[T:vl.presentation.controls.GuiListControl.KeyDirection]The right direction.</summary>
+					/// <summary>The right direction.</summary>
 					Right,
-					/// <summary>[T:vl.presentation.controls.GuiListControl.KeyDirection]The home direction.</summary>
+					/// <summary>The home direction.</summary>
 					Home,
-					/// <summary>[T:vl.presentation.controls.GuiListControl.KeyDirection]The end direction.</summary>
+					/// <summary>The end direction.</summary>
 					End,
-					/// <summary>[T:vl.presentation.controls.GuiListControl.KeyDirection]The page up direction.</summary>
+					/// <summary>The page up direction.</summary>
 					PageUp,
-					/// <summary>[T:vl.presentation.controls.GuiListControl.KeyDirection]The page down direction.</summary>
+					/// <summary>The page down direction.</summary>
 					PageDown,
-					/// <summary>[T:vl.presentation.controls.GuiListControl.KeyDirection]The page left direction.</summary>
+					/// <summary>The page left direction.</summary>
 					PageLeft,
-					/// <summary>[T:vl.presentation.controls.GuiListControl.KeyDirection]The page right direction.</summary>
+					/// <summary>The page right direction.</summary>
 					PageRight,
 				};
 
@@ -254,6 +254,7 @@ List Control
 					/// <param name="style">The item style controller.</param>
 					virtual vint								GetVisibleIndex(IItemStyleController* style)=0;
 					/// <summary>Called when the visible area of item container is changed.</summary>
+					/// <param name="bounds">The new visible area.</param>
 					virtual void								OnViewChanged(Rect bounds)=0;
 					/// <summary>Find the item by an base item and a key direction.</summary>
 					/// <returns>The item index that is found. Returns -1 if this operation failed.</returns>
@@ -399,7 +400,7 @@ List Control
 				void											DetachItemEvents(IItemStyleController* style);
 			public:
 				/// <summary>Create a control with a specified style provider.</summary>
-				/// <param name="styleProvider">The style provider.</param>
+				/// <param name="_styleProvider">The style provider.</param>
 				/// <param name="_itemProvider">The item provider as a data source.</param>
 				/// <param name="acceptFocus">Set to true if the list control is allowed to have a keyboard focus.</param>
 				GuiListControl(IStyleProvider* _styleProvider, IItemProvider* _itemProvider, bool acceptFocus=false);
@@ -505,7 +506,7 @@ Selectable List Control
 				void											OnKeyDown(compositions::GuiGraphicsComposition* sender, compositions::GuiKeyEventArgs& arguments);
 			public:
 				/// <summary>Create a control with a specified style provider.</summary>
-				/// <param name="styleProvider">The style provider.</param>
+				/// <param name="_styleProvider">The style provider.</param>
 				/// <param name="_itemProvider">The item provider as a data source.</param>
 				GuiSelectableListControl(IStyleProvider* _styleProvider, IItemProvider* _itemProvider);
 				~GuiSelectableListControl();
@@ -545,7 +546,7 @@ Selectable List Control
 				/// <param name="itemIndex">The index of the item.</param>
 				/// <param name="ctrl">Set to true if the control key is pressing.</param>
 				/// <param name="shift">Set to true if the shift key is pressing.</param>
-				/// <param name="leftMouse">Set to true if clicked by left mouse button, otherwise right mouse button.</param>
+				/// <param name="leftButton">Set to true if clicked by left mouse button, otherwise right mouse button.</param>
 				bool											SelectItemsByClick(vint itemIndex, bool ctrl, bool shift, bool leftButton);
 				/// <summary>Set the selection status using keys.</summary>
 				/// <returns>Returns true if this operation succeeded.</returns>
@@ -589,21 +590,21 @@ Predefined ItemCoordinateTransformer
 					/// <summary>Axis direction.</summary>
 					enum Alignment
 					{
-						/// <summary>[T:vl.presentation.controls.list.AxisAlignedItemCoordinateTransformer.Alignment]X:left, Y:down.</summary>
+						/// <summary>X:left, Y:down.</summary>
 						LeftDown,
-						/// <summary>[T:vl.presentation.controls.list.AxisAlignedItemCoordinateTransformer.Alignment]X:right, Y:down.</summary>
+						/// <summary>X:right, Y:down.</summary>
 						RightDown,
-						/// <summary>[T:vl.presentation.controls.list.AxisAlignedItemCoordinateTransformer.Alignment]X:left, Y:up.</summary>
+						/// <summary>X:left, Y:up.</summary>
 						LeftUp,
-						/// <summary>[T:vl.presentation.controls.list.AxisAlignedItemCoordinateTransformer.Alignment]X:right, Y:up.</summary>
+						/// <summary>X:right, Y:up.</summary>
 						RightUp,
-						/// <summary>[T:vl.presentation.controls.list.AxisAlignedItemCoordinateTransformer.Alignment]X:down, Y:left.</summary>
+						/// <summary>X:down, Y:left.</summary>
 						DownLeft,
-						/// <summary>[T:vl.presentation.controls.list.AxisAlignedItemCoordinateTransformer.Alignment]X:down, Y:right.</summary>
+						/// <summary>X:down, Y:right.</summary>
 						DownRight,
-						/// <summary>[T:vl.presentation.controls.list.AxisAlignedItemCoordinateTransformer.Alignment]X:up, Y:left.</summary>
+						/// <summary>X:up, Y:left.</summary>
 						UpLeft,
-						/// <summary>[T:vl.presentation.controls.list.AxisAlignedItemCoordinateTransformer.Alignment]X:up, Y:right.</summary>
+						/// <summary>X:up, Y:right.</summary>
 						UpRight,
 					};
 				protected:
